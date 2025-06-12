@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Web Development</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    .task-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .task {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+
+    .task:hover {
+      background-color: rgb(231, 188, 188);
+    }
+  </style>
+</head>
+<body>
+  <h1>Choose what to do</h1>
+  <div class="task-container">
+    <a href="index1.html" class="task">Weather Forecast App</a>
+    <a href="index2.html" class="task">Save and Load with localStorage</a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Forecast App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #e0f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+      margin-top: 30px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      flex: 1;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #00796b;
+      color: #fff;
+      cursor: pointer;
+    }
+    .weather-now, .forecast {
+      margin-top: 20px;
+    }
+    .weather-now h2 {
+      margin-bottom: 5px;
+    }
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .forecast-item {
+      background: #e0f2f1;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌤 Weather Forecast</h1>
+    <div class="search-bar">
+      <input type="text" id="cityInput" placeholder="Enter city name...">
+      <button onclick="getWeather()">Search</button>
+    </div>
+
+    <div class="weather-now" id="weatherNow"></div>
+    <div class="forecast" id="forecast"></div>
+  </div>
+
+  <script>
+    const apiKey = 'bf3e27067f21112cf39c1aea462f96fe';
+
+    function getEmoji(condition) {
+      const map = {
+        Clear: '☀',
+        Clouds: '☁',
+        Rain: '🌧',
+        Drizzle: '🌦',
+        Thunderstorm: '⛈',
+        Snow: '❄',
+        Mist: '🌫',
+        Smoke: '💨',
+        Haze: '🌫',
+        Fog: '🌫'
+      };
+      return map[condition] || '🌈';
+    }
+
+    async function getWeather() {
+      const city = document.getElementById('cityInput').value.trim();
+      if (!city) return alert('Please enter a city name.');
+
+      try {
+        // Current Weather
+        const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+        const weatherData = await weatherRes.json();
+
+        const now = new Date();
+        const emoji = getEmoji(weatherData.weather[0].main);
+
+        document.getElementById('weatherNow').innerHTML = `
+          <h2>Now in ${weatherData.name}</h2>
+          <p>${now.toLocaleTimeString()} | ${weatherData.weather[0].main} ${emoji}</p>
+          <p>Temperature: ${weatherData.main.temp}°C</p>
+          <p>Humidity: ${weatherData.main.humidity}%</p>
+          <p>Wind: ${weatherData.wind.speed} km/h</p>
+        `;
+
+        // Forecast
+        const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
+        const forecastData = await forecastRes.json();
+
+        let forecastHTML = `<h2>📅 Today's Forecast</h2><div class="forecast-grid">`;
+        const today = new Date().getDate();
+
+        forecastData.list.forEach(item => {
+          const date = new Date(item.dt * 1000);
+          if (date.getDate() === today) {
+            forecastHTML += `
+              <div class="forecast-item">
+                <strong>${date.getHours()}:00</strong>
+                <p>${item.main.temp}°C</p>
+                <p>${getEmoji(item.weather[0].main)}</p>
+              </div>
+            `;
+          }
+        });
+
+        forecastHTML += '</div>';
+        document.getElementById('forecast').innerHTML = forecastHTML;
+
+      } catch (error) {
+        alert('City not found or API error');
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
